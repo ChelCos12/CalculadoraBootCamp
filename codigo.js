@@ -1,3 +1,4 @@
+//DOM
 const pantalla = document.querySelector('.pantalla');
 const botonesNumeros = document.querySelectorAll('.numero');
 const botonesOperadores = document.querySelectorAll('.operador');
@@ -14,7 +15,6 @@ function actualizarPantalla() {
     pantalla.textContent = numeroActual;
 }
 
-// Limpiar toda la calculadora
 function limpiar() {
     numeroActual = '0';
     numeroAnterior = '';
@@ -23,15 +23,11 @@ function limpiar() {
     actualizarPantalla();
 }
 
-// Agregar un número a la pantalla
 function agregarNumero(numero) {
-    // Si debe resetear (después de un cálculo), empieza desde cero
     if (debeResetear) {
         numeroActual = numero;
         debeResetear = false;
     } else {
-        // Si la pantalla muestra '0', reemplázalo
-        // Si no, agrega el número al final
         if (numeroActual === '0') {
             numeroActual = numero;
         } else {
@@ -41,7 +37,6 @@ function agregarNumero(numero) {
     actualizarPantalla();
 }
 
-// Agregar el punto decimal
 function agregarPunto() {
     // Solo agregar punto si no hay uno ya
     if (!numeroActual.includes('.')) {
@@ -49,10 +44,7 @@ function agregarPunto() {
         actualizarPantalla();
     }
 }
-
-// Seleccionar una operación (+, -, ×, ÷)
 function seleccionarOperacion(op) {
-    // Si ya había una operación pendiente, calcular primero
     if (operacion !== null && !debeResetear) {
         calcular();
     }
@@ -62,7 +54,6 @@ function seleccionarOperacion(op) {
     debeResetear = true;
 }
 
-// Realizar el cálculo
 function calcular() {
     const anterior = parseFloat(numeroAnterior);
     const actual = parseFloat(numeroActual);
@@ -112,8 +103,7 @@ function borrarOperacion() {
     actualizarPantalla();
 }
 
-
-// Botones de números (0-9 y punto)
+//BOTONES
 botonesNumeros.forEach(boton => {
     boton.addEventListener('click', () => {
         const valor = boton.textContent;
@@ -126,14 +116,12 @@ botonesNumeros.forEach(boton => {
     });
 });
 
-// Botones de operadores (+, -, ×, ÷)
 botonesOperadores.forEach(boton => {
     boton.addEventListener('click', () => {
         seleccionarOperacion(boton.textContent);
     });
 });
 
-// Botones de funciones (C, ±)
 botonesFuncion.forEach(boton => {
     boton.addEventListener('click', () => {
         const funcion = boton.textContent;
@@ -148,13 +136,12 @@ botonesFuncion.forEach(boton => {
     });
 });
 
-// Botón igual (=)
 botonIgual.addEventListener('click', () => {
     calcular();
 });
 
 
-//lectura desde el teclado
+//TECLADO
 document.addEventListener('keydown', (event) => {
     const tecla = event.key;
     
@@ -185,8 +172,6 @@ document.addEventListener('keydown', (event) => {
     if (tecla === 'Escape') {
         limpiar();
     }
-    
-    // Backspace para borrar último dígito
     if (tecla === 'Backspace') {
         if (numeroActual.length > 1) {
             numeroActual = numeroActual.slice(0, -1);
