@@ -1,0 +1,71 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.calculadora {
+    background: #2d2d2d;
+    padding: 20px;
+    border-radius: 20px;
+    width: 320px;
+}
+
+.pantalla {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 30px 20px;
+    border-radius: 10px;
+    text-align: right;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.botones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    
+}
+
+button {
+    padding: 0px;
+    width: 70px;     
+    height: 70px;    
+    font-size: 1.5em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+button:active {
+    transform: scale(0.9);
+}
+
+.numero {
+    background: #505050;
+    color: #fff;
+}
+
+.operador {
+    background: #ff9500;
+    color: #fff;
+}
+
+.funcion {
+    background: #a6a6a6;
+    color: #1a1a1a;
+}
+
+.igual {
+    background: #ff9500;
+    color: #fff;
+    grid-column: span 2;
+    width: 150px;
+
+}
