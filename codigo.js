@@ -1,10 +1,8 @@
-//DOM
 const pantalla = document.querySelector('.pantalla');
 const botonesNumeros = document.querySelectorAll('.numero');
 const botonesOperadores = document.querySelectorAll('.operador');
 const botonesFuncion = document.querySelectorAll('.funcion');
 const botonIgual = document.querySelector('.igual');
-
 
 let numeroActual = '0';
 let numeroAnterior = '';
@@ -14,7 +12,6 @@ let debeResetear = false;
 function actualizarPantalla() {
     pantalla.textContent = numeroActual;
 }
-
 function limpiar() {
     numeroActual = '0';
     numeroAnterior = '';
@@ -38,12 +35,12 @@ function agregarNumero(numero) {
 }
 
 function agregarPunto() {
-    // Solo agregar punto si no hay uno ya
     if (!numeroActual.includes('.')) {
         numeroActual = numeroActual + '.';
         actualizarPantalla();
     }
 }
+
 function seleccionarOperacion(op) {
     if (operacion !== null && !debeResetear) {
         calcular();
@@ -53,7 +50,6 @@ function seleccionarOperacion(op) {
     operacion = op;
     debeResetear = true;
 }
-
 function calcular() {
     const anterior = parseFloat(numeroAnterior);
     const actual = parseFloat(numeroActual);
@@ -103,7 +99,6 @@ function borrarOperacion() {
     actualizarPantalla();
 }
 
-//BOTONES
 botonesNumeros.forEach(boton => {
     boton.addEventListener('click', () => {
         const valor = boton.textContent;
@@ -140,8 +135,6 @@ botonIgual.addEventListener('click', () => {
     calcular();
 });
 
-
-//TECLADO
 document.addEventListener('keydown', (event) => {
     const tecla = event.key;
     
@@ -151,7 +144,6 @@ document.addEventListener('keydown', (event) => {
     if (tecla === '.') {
         agregarPunto();
     }
-    
     if (tecla === '+') {
         seleccionarOperacion('+');
     }
@@ -162,22 +154,12 @@ document.addEventListener('keydown', (event) => {
         seleccionarOperacion('×');
     }
     if (tecla === '/') {
-        event.preventDefault(); //?
         seleccionarOperacion('÷');
     }
     if (tecla === 'Enter' || tecla === '=') {
-        event.preventDefault();
         calcular();
     }
     if (tecla === 'Escape') {
         limpiar();
-    }
-    if (tecla === 'Backspace') {
-        if (numeroActual.length > 1) {
-            numeroActual = numeroActual.slice(0, -1);
-        } else {
-            numeroActual = '0';
-        }
-        actualizarPantalla();
     }
 });
