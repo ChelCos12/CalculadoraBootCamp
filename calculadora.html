@@ -1,44 +1,207 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <title>Calculadora</title>
-    <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
-    <div class="calculadora">
-        <div class="pantalla">0</div>
-        <div class="botones">
-            <button class="funcion">CE</button>
-            <button class="funcion">C</button>
-            <button class="funcion">±</button>
-            <button class="operador">÷</button>
-            
-            <button class="numero">7</button>
-            <button class="numero">8</button>
-            <button class="numero">9</button>
-            <button class="operador">×</button>
-            
-            <button class="numero">4</button>
-            <button class="numero">5</button>
-            <button class="numero">6</button>
-            <button class="operador">-</button>
-            
-            <button class="numero">1</button>
-            <button class="numero">2</button>
-            <button class="numero">3</button>
-            <button class="operador">+</button>
-            
-            <button class="numero">0</button>
-            <button class="numero">.</button>
-            <button class="igual">=</button>
-        </div>
-    </div>
+const pantalla = document.querySelector('.pantalla');
+const botonesNumeros = document.querySelectorAll('.numero');
+const botonesOperadores = document.querySelectorAll('.operador');
+const botonesFuncion = document.querySelectorAll('.funcion');
+const botonIgual = document.querySelector('.igual');
 
-    <div class="historial">
-    <h3>Historial</h3>
-    <button id="limpiar-historial">Limpiar</button>
-    <div id="lista-historial"></div>
-</div>
-    <script src="codigo.js"></script>
-</body>
-</html>
+let numeroActual = '0';
+let numeroAnterior = '';
+let operacion = null;
+let debeResetear = false;
+let listaHistorial = [];
+
+const historialGuardado = localStorage.getItem("historial");
+if (historialGuardado) {
+    listaHistorial = JSON.parse(historialGuardado);
+    mostrarHistorial();
+}
+
+function actualizarPantalla() {
+    pantalla.textContent = numeroActual;
+}
+function limpiar() {
+    numeroActual = '0';
+    numeroAnterior = '';
+    operacion = null;
+    debeResetear = false;
+    actualizarPantalla();
+}
+
+function agregarNumero(numero) {
+    if (debeResetear) {
+        numeroActual = numero;
+        debeResetear = false;
+    } else {
+        if (numeroActual === '0') {
+            numeroActual = numero;
+        } else {
+            numeroActual = numeroActual + numero;
+        }
+    }
+    actualizarPantalla();
+}
+
+function agregarPunto() {
+    if (!numeroActual.includes('.')) {
+        numeroActual = numeroActual + '.';
+        actualizarPantalla();
+    }
+}
+
+function seleccionarOperacion(op) {
+    if (operacion !== null && !debeResetear) {
+        calcular();
+    }
+    
+    numeroAnterior = numeroActual;
+    operacion = op;
+    debeResetear = true;
+}
+function calcular() {
+    const anterior = parseFloat(numeroAnterior);
+    const actual = parseFloat(numeroActual);
+    let resultado;
+    
+    switch (operacion) {
+        case '+':
+            resultado = anterior + actual;
+            break;
+        case '-':
+            resultado = anterior - actual;
+            break;
+        case '×':
+            resultado = anterior * actual;
+            break;
+        case '÷':
+            if (actual === 0) {
+                alert('No se puede dividir entre cero');
+                limpiar();
+                return;
+            }
+            resultado = anterior / actual;
+            break;
+        default:
+            return;
+    }
+
+    const expresion = `${numeroAnterior} ${operacion} ${numeroActual}`;
+    guardarHistorial({ expresion, resultado });
+    
+    numeroActual = resultado.toString();
+    operacion = null;
+    numeroAnterior = '';
+    debeResetear = true;
+    actualizarPantalla();
+}
+function cambiarSigno() {
+    if (numeroActual === '0') return;
+    
+    if (numeroActual.charAt(0) === '-') {
+        numeroActual = numeroActual.slice(1);
+    } else {
+        numeroActual = '-' + numeroActual;
+    }
+    actualizarPantalla();
+}
+
+function borrarOperacion() {
+    numeroActual = '0';
+    actualizarPantalla();
+}
+
+botonesNumeros.forEach(boton => {
+    boton.addEventListener('click', () => {
+        const valor = boton.textContent;
+        
+        if (valor === '.') {
+            agregarPunto();
+        } else {
+            agregarNumero(valor);
+        }
+    });
+});
+
+botonesOperadores.forEach(boton => {
+    boton.addEventListener('click', () => {
+        seleccionarOperacion(boton.textContent);
+    });
+});
+
+botonesFuncion.forEach(boton => {
+    boton.addEventListener('click', () => {
+        const funcion = boton.textContent;
+        
+        if (funcion === 'C') {
+            limpiar();
+        } else if (funcion === '±') {
+            cambiarSigno();
+        } else if (funcion === 'CE') {
+            borrarOperacion();
+        }
+    });
+});
+
+botonIgual.addEventListener('click', () => {
+    calcular();
+});
+
+//LocalHistory
+function guardarHistorial(operacion) {
+    listaHistorial.push(operacion);
+    localStorage.setItem("historial", JSON.stringify(listaHistorial));
+    mostrarHistorial();
+}
+
+function mostrarHistorial() {
+    let contenedor = document.getElementById("lista-historial");
+    contenedor.innerHTML = "";
+    let historialInvertido = listaHistorial.slice().reverse();
+    
+    for (let i = 0; i < historialInvertido.length; i++) {
+        let elementoItem = document.createElement("div");
+        elementoItem.className = "operacion-item";
+        elementoItem.innerHTML = `
+            <div>${historialInvertido[i].expresion}</div>
+            <div class="resultado">= ${historialInvertido[i].resultado}</div>
+        `;
+        contenedor.appendChild(elementoItem);
+    }
+}
+
+function limpiarHistorial() {
+    listaHistorial = [];
+    localStorage.removeItem("historial");
+    mostrarHistorial();
+}
+
+
+document.addEventListener('keydown', (event) => {
+    const tecla = event.key;
+    
+    if (tecla >= '0' && tecla <= '9') {
+        agregarNumero(tecla);
+    }
+    if (tecla === '.') {
+        agregarPunto();
+    }
+    if (tecla === '+') {
+        seleccionarOperacion('+');
+    }
+    if (tecla === '-') {
+        seleccionarOperacion('-');
+    }
+    if (tecla === '*') {
+        seleccionarOperacion('×');
+    }
+    if (tecla === '/') {
+        seleccionarOperacion('÷');
+    }
+    if (tecla === 'Enter' || tecla === '=') {
+        calcular();
+    }
+    if (tecla === 'Escape') {
+        limpiar();
+    }
+});
+
+document.getElementById('limpiar-historial').addEventListener('click', limpiarHistorial);
