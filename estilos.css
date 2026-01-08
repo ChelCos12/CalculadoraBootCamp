@@ -1,8 +1,9 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
 }
 
@@ -12,6 +13,51 @@ body {
     border-radius: 20px;
     width: 320px;
 }
+
+.historial {
+    background: #2d2d2d;
+    padding: 20px;
+    border-radius: 20px;
+    width: 280px;
+    max-height: 500px;
+}
+
+.historial h3 {
+    color: #fff;
+    text-align: center;
+}
+
+#limpiar-historial {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: #ff5555;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+#lista-historial {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.operacion-item {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9em;
+}
+
+.operacion-item .resultado {
+    color: #ff9500;
+    font-weight: 600;
+}
+
 
 .pantalla {
     background: #1a1a1a;
