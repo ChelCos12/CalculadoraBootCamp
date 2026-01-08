@@ -8,6 +8,13 @@ let numeroActual = '0';
 let numeroAnterior = '';
 let operacion = null;
 let debeResetear = false;
+let historyList = [];
+
+const savedHistory = localStorage.getItem("history");
+if (savedHistory) {
+    historyList = JSON.parse(savedHistory);
+    renderHistory();
+}
 
 function actualizarPantalla() {
     pantalla.textContent = numeroActual;
@@ -76,6 +83,9 @@ function calcular() {
         default:
             return;
     }
+
+    const expresion = `${numeroAnterior} ${operacion} ${numeroActual}`;
+    saveHistory({ expresion, resultado });
     
     numeroActual = resultado.toString();
     operacion = null;
@@ -135,6 +145,36 @@ botonIgual.addEventListener('click', () => {
     calcular();
 });
 
+//LocalHistory
+function saveHistory(operation) {
+    historyList.push(operation);
+    localStorage.setItem("history", JSON.stringify(historyList));
+    renderHistory();
+}
+
+function renderHistory() {
+    let container = document.getElementById("lista-historial");
+    container.innerHTML = "";
+    let reversedHistory = historyList.slice().reverse();
+    
+    for (let i = 0; i < reversedHistory.length; i++) {
+        let itemElement = document.createElement("div");
+        itemElement.className = "operacion-item";
+        itemElement.innerHTML = `
+            <div>${reversedHistory[i].expresion}</div>
+            <div class="resultado">= ${reversedHistory[i].resultado}</div>
+        `;
+        container.appendChild(itemElement);
+    }
+}
+
+function clearHistory() {
+    historyList = [];
+    localStorage.removeItem("history");
+    renderHistory();
+}
+
+
 document.addEventListener('keydown', (event) => {
     const tecla = event.key;
     
@@ -163,3 +203,5 @@ document.addEventListener('keydown', (event) => {
         limpiar();
     }
 });
+
+document.getElementById('limpiar-historial').addEventListener('click', clearHistory);
